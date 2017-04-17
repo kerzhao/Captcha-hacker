@@ -4,6 +4,7 @@ import os
 from itertools import product
 from PIL import Image, ImageDraw, ImageFont
 import cv2
+import numpy as np
 
 """
 基本：
@@ -22,6 +23,15 @@ import cv2
 11 字符扭曲
 12 噪音（点、线段、圈）
 """
+
+#----------------------------------------------------------------------
+def sin(x, height):
+    """"""
+    a = float(random.choice([5, 12, 24, 48, 128]))
+    d = random.choice([2, 4])
+    c = random.randint(1, 100)
+    b = 2 * random.random()
+    return np.array(map(int, height / d * (np.sin((x+c)/a) + b)))
 
 def randRGB():
     return (random.randint(50, 100), random.randint(50, 100), random.randint(50, 100))
@@ -49,7 +59,7 @@ def captcha_draw(size_im, nb_cha, set_cha, fonts=None, overlap=0.1,
         fonts 中分中文和英文字体
         label全保存在label.txt 中，文件第i行对应"i.jpg"的图片标签，i从1开始
     """
-    rate_cha = 1.2 # rate to be tuned
+    rate_cha = 1.3 # rate to be tuned
     width_im, height_im = size_im
     width_cha = int(width_im / max(nb_cha-overlap, 1)) # 字符区域宽度
     height_cha = height_im # 字符区域高度
@@ -92,6 +102,13 @@ def captcha_draw(size_im, nb_cha, set_cha, fonts=None, overlap=0.1,
             x = random.randint(0, width_im)
             y = random.randint(0, height_im)
             drawer.point(xy=(x, y), fill=color_point)
+    if 'sin' in noise:
+        color_sine = randRGB()
+        x = np.arange(0, width_im)
+        y = sin(x, height_im)
+        for k in range(4):
+            for i, j in zip(x, y+k):
+                drawer.point(xy=(i, j), fill=color_sine)
     if 'line' in noise:
         nb_line = 10
         for i in range(nb_line):
@@ -137,7 +154,7 @@ def captcha_generator():
     rd_text_colors = [True, True] # false 代表字体颜色全一致，但都是黑色
     rd_bg_color = True 
     set_chas = ["ABCDEFGHIJKLMNOPQRSTUVWXYZabdefghijlmnqrtuwxy12345678901234567890"]
-    noises = [['line', 'point']]
+    noises = [['line', 'point', 'sin']]
     rotates = [True, True]
     nb_chas = [4, 6]
     nb_image = 50000
