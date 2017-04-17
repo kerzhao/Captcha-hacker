@@ -127,7 +127,17 @@ def captcha_draw(size_im, nb_cha, set_cha, fonts=None, overlap=0.1,
             ex = sx+random.randint(15, 25)
             ey = sy+random.randint(10, 15)
             drawer.arc((sx, sy, ex, ey), 0, 360, fill=color_circle)
+            
+    return np.asarray(im), contents
+
+
+#----------------------------------------------------------------------
+def captcha_save(*args, **kwargs):
     
+    img, contents = captcha_draw(*args, **kwargs)
+    im = Image.fromarray(np.uint8(img))
+    
+    dir_path = kwargs['dir_path']
     
     if os.path.exists(dir_path) == False: # 如果文件夹不存在，则创建对应的文件夹
         os.makedirs(dir_path)
@@ -177,7 +187,7 @@ def captcha_generator():
             font_path = random.choice(font_paths)
             dir_name = 'all'
             dir_path = 'img_data/'+dir_name+'/'
-            captcha_draw(size_im=size_im, nb_cha=nb_cha, set_cha=set_cha, 
+            captcha_save(size_im=size_im, nb_cha=nb_cha, set_cha=set_cha, 
                 overlap=overlap, rd_text_pos=rd_text_pos, rd_text_size=False, 
                 rd_text_color=rd_text_color, rd_bg_color=rd_bg_color, noise=noise, 
                 rotate=rotate, dir_path=dir_path, fonts=font_path)
