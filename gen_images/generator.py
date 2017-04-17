@@ -49,7 +49,7 @@ def captcha_draw(size_im, nb_cha, set_cha, fonts=None, overlap=0.1,
         fonts 中分中文和英文字体
         label全保存在label.txt 中，文件第i行对应"i.jpg"的图片标签，i从1开始
     """
-    rate_cha = 1 # rate to be tuned
+    rate_cha = 1.2 # rate to be tuned
     width_im, height_im = size_im
     width_cha = int(width_im / max(nb_cha-overlap, 1)) # 字符区域宽度
     height_cha = height_im # 字符区域高度
@@ -81,7 +81,9 @@ def captcha_draw(size_im, nb_cha, set_cha, fonts=None, overlap=0.1,
         font = ImageFont.truetype(fonts['eng'], size_cha)
         contents.append(cha) 
         im_cha = cha_draw(cha, text_color, font, rotate, size_cha)
-        im.paste(im_cha, (int(max(i-overlap, 0)*width_cha)+derx, dery), im_cha) # 字符左上角位置
+        im.paste(im_cha, 
+                 (int(max(i-overlap, 0)*width_cha)+derx+random.randint(0, 10), dery++random.randint(0, 10)), 
+                 im_cha) # 字符左上角位置
         
     if 'point' in noise:
         nb_point = 30
